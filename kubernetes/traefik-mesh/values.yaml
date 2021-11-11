@@ -2,7 +2,7 @@
 
 # acl: true
 
-# kubedns: true
+kubedns: true
 
 # clusterDomain: cluster.local
 

@@ -13,11 +13,15 @@
 1. Execute `./02-install-traefik-mesh.sh` to install traefik mesh to your Kubernetes cluster.
    <br>Use [values.yaml](./values.yaml) to customize the installation
 
-## Check your installation
+## Check installation
 Use this command to view the generated resources
 ```shell
 kubectl get all -n traefik-mesh
 ```
 
+## Upgrade installation
+Change configuration in [values.yaml](./values.yaml) then run this command to upgrade the installation.
+`./03-upgrade-traefik-mesh.yml`
+
 ## Uninstall
-Execute `./03-remove-traefik-mesh.sh` to remove traefik-mesh installation.
+Execute `./04-remove-traefik-mesh.sh` to remove traefik-mesh installation.
