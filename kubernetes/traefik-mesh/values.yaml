@@ -1,6 +1,6 @@
 # Default values for Traefik Mesh.
 
-# acl: true
+acl: false
 
 kubedns: true
 

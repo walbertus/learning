@@ -19,6 +19,9 @@ Use this command to view the generated resources
 kubectl get all -n traefik-mesh
 ```
 
+## Onboard application to use traefik
+You can config your application to use traefik mesh by changing the communication between service from using `.svc.cluster.local` to using `.traefik.mesh`
+
 ## Upgrade installation
 Change configuration in [values.yaml](./values.yaml) then run this command to upgrade the installation.
 `./03-upgrade-traefik-mesh.yml`
