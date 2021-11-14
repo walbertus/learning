@@ -1,0 +1,10 @@
+### ConfigMap to use Traefik mesh
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: productpage
+data:
+  DETAILS_HOSTNAME: details
+  RATINGS_HOSTNAME: ratings
+  REVIEWS_HOSTNAME: reviews
+  SERVICES_DOMAIN: default.traefik.mesh

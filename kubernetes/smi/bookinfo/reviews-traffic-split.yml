@@ -1,0 +1,36 @@
+apiVersion: split.smi-spec.io/v1alpha3
+kind: TrafficSplit
+metadata:
+  name: reviews-rollout
+spec:
+  service: reviews
+  backends:
+    - service: reviews-v1
+      weight: 500
+    - service: reviews-v2
+      weight: 200
+    - service: reviews-v3
+      weight: 100
+---
+apiVersion: specs.smi-spec.io/v1alpha3
+kind: HTTPRouteGroup
+metadata:
+  name: reviews-authenticated
+spec:
+  matches:
+    - name: authenticated-users
+      headers:
+        - end-user: ".*"
+---
+apiVersion: split.smi-spec.io/v1alpha3
+kind: TrafficSplit
+metadata:
+  name: reviews-authenticated
+spec:
+  service: reviews
+  matches:
+    - kind: HTTPRouteGroup
+      name: reviews-authenticated
+  backends:
+    - service: reviews-v3
+      weight: 100
