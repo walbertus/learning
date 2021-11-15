@@ -6,11 +6,11 @@ spec:
   service: reviews
   backends:
     - service: reviews-v1
-      weight: 500
+      weight: 0
     - service: reviews-v2
-      weight: 200
+      weight: 500
     - service: reviews-v3
-      weight: 100
+      weight: 500
 ---
 apiVersion: specs.smi-spec.io/v1alpha3
 kind: HTTPRouteGroup

@@ -2,7 +2,7 @@
 apiVersion: specs.smi-spec.io/v1alpha3
 kind: HTTPRouteGroup
 metadata:
-  name: reviews-all
+  name: everything
 spec:
   matches:
     - name: all
@@ -12,10 +12,10 @@ spec:
 apiVersion: specs.smi-spec.io/v1alpha3
 kind: HTTPRouteGroup
 metadata:
-  name: reviews-metrics
+  name: metrics
 spec:
   matches:
-    - name: all
+    - name: metrics
       pathRegex: "/metrics"
       methods: ["GET"]
 ---
@@ -26,14 +26,31 @@ metadata:
 spec:
   destination:
     kind: ServiceAccount
-    name: details
+    name: reviews
     namespace: default
   rules:
     - kind: HTTPRouteGroup
-      name: reviews-all
+      name: everything
   sources:
     - kind: ServiceAccount
       name: productpage
+      namespace: default
+---
+apiVersion: access.smi-spec.io/v1alpha2
+kind: TrafficTarget
+metadata:
+  name: ratings-all
+spec:
+  destination:
+    kind: ServiceAccount
+    name: ratings
+    namespace: default
+  rules:
+    - kind: HTTPRouteGroup
+      name: everything
+  sources:
+    - kind: ServiceAccount
+      name: reviews
       namespace: default
 
 # curl http://details.default.traefik.mesh:9080
