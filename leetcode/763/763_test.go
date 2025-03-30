@@ -1,8 +1,9 @@
 package leetcode
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type Testcase763 struct {
@@ -10,7 +11,7 @@ type Testcase763 struct {
 	ExpectedResult []int
 }
 
-func Test200(t *testing.T) {
+func Test763(t *testing.T) {
 	testcases := []Testcase763{
 		{
 			Input:          "a",

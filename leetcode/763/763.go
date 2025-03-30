@@ -1,90 +1,72 @@
 package leetcode
 
-import "sort"
-
-const (
-	OPEN  = iota
-	CLOSE = iota
-)
-
 // https://leetcode.com/problems/partition-labels/submissions/
 func partitionLabels(s string) []int {
-	firstOccurrence := map[rune]int{}
-	lastOccurrence := map[rune]int{}
+	firstOccurrence := newOccuranceMarker()
+	lastOccurrence := newOccuranceMarker()
+	stringLength := len(s)
 	for idx, char := range s {
-		if _, ok := firstOccurrence[char]; !ok {
-			firstOccurrence[char] = idx
+		if !firstOccurrence.isExist(char) {
+			firstOccurrence.set(char, idx)
 		}
-		lastOccurrence[char] = idx
+		lastOccurrence.set(char, idx)
 	}
 
-	var actions []actionInLocation
-	for r, i := range firstOccurrence {
-		if firstOccurrence[r] == lastOccurrence[r] {
-			continue
+	occuranceCounter := make([]int, stringLength)
+	for i := 0; i < 26; i++ {
+		currentRune := indexToRune(i)
+		if firstOccurrence.isExist(currentRune) {
+			occuranceCounter[firstOccurrence.get(currentRune)]++
 		}
-		actions = append(actions, actionInLocation{
-			action:       OPEN,
-			charInEffect: r,
-			location:     i,
-		})
-	}
-	for r, i := range lastOccurrence {
-		actions = append(actions, actionInLocation{
-			action:       CLOSE,
-			charInEffect: r,
-			location:     i,
-		})
+		if lastOccurrence.isExist(currentRune) {
+			occuranceCounter[lastOccurrence.get(currentRune)]--
+		}
 	}
 
-	sort.Sort(ByLocation(actions))
-	var partitions []int
-	set := newRuneSet()
-	lastPartitionStart := 0
-	for _, action := range actions {
-		if action.action == OPEN {
-			set.Add(action.charInEffect)
-			continue
-		}
-		set.Pop(action.charInEffect)
-		if set.Size() == 0 {
-			partitions = append(partitions, action.location-lastPartitionStart+1)
-			lastPartitionStart = action.location + 1
+	partitions := make([]int, 0)
+	counter := 0
+	lastPartition := -1
+	for i := 0; i < stringLength; i++ {
+		counter += occuranceCounter[i]
+		if counter == 0 {
+			partitions = append(partitions, i-lastPartition)
+			lastPartition = i
 		}
 	}
+
 	return partitions
 }
 
-type actionCode int
-
-type actionInLocation struct {
-	action       actionCode
-	charInEffect rune
-	location     int
+func runeToIndex(r rune) int {
+	return int(r - 'a')
 }
 
-type ByLocation []actionInLocation
-
-func (l ByLocation) Len() int           { return len(l) }
-func (l ByLocation) Less(i, j int) bool { return l[i].location < l[j].location }
-func (l ByLocation) Swap(i, j int)      { l[i], l[j] = l[j], l[i] }
-
-type runeSet struct {
-	container map[rune]bool
+func indexToRune(i int) rune {
+	return rune(i + 'a')
 }
 
-func newRuneSet() *runeSet {
-	return &runeSet{map[rune]bool{}}
+type occuranceMarker struct {
+	container []int
 }
 
-func (s *runeSet) Pop(r rune) {
-	delete(s.container, r)
+func newOccuranceMarker() *occuranceMarker {
+	container := make([]int, 26)
+	for i := 0; i < 26; i++ {
+		container[i] = -1
+	}
+	return &occuranceMarker{
+		container: container,
+	}
 }
 
-func (s *runeSet) Add(r rune) {
-	s.container[r] = true
+func (o *occuranceMarker) isExist(r rune) bool {
+	return o.container[runeToIndex(r)] != -1
 }
 
-func (s *runeSet) Size() int {
-	return len(s.container)
+func (o *occuranceMarker) set(r rune, val int) {
+	o.container[runeToIndex(r)] = val
+}
+
+func (o *occuranceMarker) get(r rune) int {
+	return o.container[runeToIndex(r)]
 }
