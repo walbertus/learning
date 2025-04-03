@@ -6,34 +6,18 @@ import (
 
 // https://leetcode.com/problems/stone-game-iii
 func stoneGameIII(stoneValue []int) string {
-	suffixSum := make([]int, len(stoneValue))
-	suffixSum[len(stoneValue)-1] = stoneValue[len(stoneValue)-1]
-
-	for i := len(stoneValue) - 2; i >= 0; i-- {
-		suffixSum[i] = suffixSum[i+1] + stoneValue[i]
-	}
-
 	dp := newMemo(len(stoneValue))
 
-	aliceScore := maxStone(stoneValue, 0, suffixSum, dp)
-	bobScore := suffixSum[0] - aliceScore
-
-	if aliceScore > bobScore {
+	aliceScore := maxStone(stoneValue, 0, dp)
+	if aliceScore > 0 {
 		return "Alice"
-	} else if aliceScore < bobScore {
+	} else if aliceScore < 0 {
 		return "Bob"
 	}
 	return "Tie"
 }
 
-func maxStone(stoneValue []int, idx int, suffixSum []int, dp *memo) int {
-	if idx >= len(stoneValue) {
-		return math.MinInt
-	}
-	if idx == len(stoneValue)-1 {
-		return stoneValue[idx]
-	}
-
+func maxStone(stoneValue []int, idx int, dp *memo) int {
 	if ok, value := dp.get(idx); ok {
 		return value
 	}
@@ -47,7 +31,7 @@ func maxStone(stoneValue []int, idx int, suffixSum []int, dp *memo) int {
 		stoneTake += stoneValue[idx+i-1]
 		currentValue := stoneTake
 		if idx+i < len(stoneValue) {
-			currentValue += suffixSum[idx+i] - maxStone(stoneValue, idx+i, suffixSum, dp)
+			currentValue -= maxStone(stoneValue, idx+i, dp)
 		}
 		result = maxInt(result, currentValue)
 	}
